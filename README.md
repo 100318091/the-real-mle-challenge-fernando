@@ -189,8 +189,7 @@ Go to [API Inter](http://localhost/docs) for API Interaction and test
 
 ## TODO
 
-* CICD - GitHub actions
-* Include COVERAGE
+* CICD - GitHub actions - Improve
 * Improve Code
 * Improve Model Registry
 * Include more tests
