@@ -1,3 +1,12 @@
 Pipfile
 
 .vscode/
+
+# exclude venv
+.venv
+
+# models - binary finales
+models/*
+
+# python
+**/__pycache__
