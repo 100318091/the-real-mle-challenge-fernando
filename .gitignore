@@ -10,3 +10,6 @@ models/*
 
 # python
 **/__pycache__
+
+# coverage results
+junit
