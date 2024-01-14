@@ -1,0 +1,95 @@
+schema: '2.0'
+stages:
+  preprocessing:
+    cmd: python src/training/preprocessing.py --input data/dvc/raw/listings.csv --output
+      data/dvc/processed/preprocessed_listings.csv
+    deps:
+    - path: data/dvc/raw/listings.csv
+      hash: md5
+      md5: fa89385568757394d855ba067124dfe8
+      size: 91293672
+    params:
+      params.yaml:
+        data:
+          raw_data_dir: data/dvc/raw
+          processed_data_dir: data/dvc/processed
+          train_test_set_dir: data/dvc/train_test
+          raw_data_file: listings.csv
+          processed_data_file: preprocessed_listings.csv
+    outs:
+    - path: data/dvc/processed/preprocessed_listings.csv
+      hash: md5
+      md5: 39f0cb891be564ef01e5ae2ae8b6bc48
+      size: 16443069
+  training:
+    cmd: python src/training/fitting.py --input_data data/dvc/processed/preprocessed_listings.csv
+      --output_train_test data/dvc/train_test --output_model models/simple_classifier.pkl
+    deps:
+    - path: data/dvc/processed/preprocessed_listings.csv
+      hash: md5
+      md5: 39f0cb891be564ef01e5ae2ae8b6bc48
+      size: 16443069
+    params:
+      params.yaml:
+        data:
+          raw_data_dir: data/dvc/raw
+          processed_data_dir: data/dvc/processed
+          train_test_set_dir: data/dvc/train_test
+          raw_data_file: listings.csv
+          processed_data_file: preprocessed_listings.csv
+        model:
+          model_dir: models
+          artefact_name: simple_classifier.pkl
+    outs:
+    - path: data/dvc/train_test
+      hash: md5
+      md5: 67b2f8794dcca5180ca27cb1db2ee9af.dir
+      size: 1134441
+      nfiles: 4
+    - path: models/simple_classifier.pkl
+      hash: md5
+      md5: b1df9bc9f243966ab2be293d9e7cdab7
+      size: 62844806
+  evaluation:
+    cmd: python src/training/evaluation.py --input_data data/dvc/train_test --input_model
+      models/simple_classifier.pkl --importance_output_graphs evaluation/graphs/importance.png
+      --output_reports_path evaluation/reports/metrics.json --output_reports_confusion_matrix
+      evaluation/graphs/confusion_matrix.csv
+    deps:
+    - path: data/dvc/train_test
+      hash: md5
+      md5: 67b2f8794dcca5180ca27cb1db2ee9af.dir
+      size: 1134441
+      nfiles: 4
+    - path: models/simple_classifier.pkl
+      hash: md5
+      md5: b1df9bc9f243966ab2be293d9e7cdab7
+      size: 62844806
+    params:
+      params.yaml:
+        data:
+          raw_data_dir: data/dvc/raw
+          processed_data_dir: data/dvc/processed
+          train_test_set_dir: data/dvc/train_test
+          raw_data_file: listings.csv
+          processed_data_file: preprocessed_listings.csv
+        model:
+          model_dir: models
+          artefact_name: simple_classifier.pkl
+        plots_and_metrics:
+          reports_dir: evaluation/reports/metrics.json
+          importance_graphs_dir: evaluation/graphs/importance.png
+          confusion_matrix_dir: evaluation/graphs/confusion_matrix.csv
+    outs:
+    - path: evaluation/graphs/confusion_matrix.csv
+      hash: md5
+      md5: 164d720c81077705f550fe966774c971
+      size: 40492
+    - path: evaluation/graphs/importance.png
+      hash: md5
+      md5: e3fb31f03f4e90a267f9c608f58d541a
+      size: 22149
+    - path: evaluation/reports/metrics.json
+      hash: md5
+      md5: dd872ef76ef6b545d880adcbf7827251
+      size: 775

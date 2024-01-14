@@ -1,0 +1,14 @@
+data:
+  raw_data_dir: data/dvc/raw
+  processed_data_dir: data/dvc/processed
+  train_test_set_dir: data/dvc/train_test
+  raw_data_file: listings.csv
+  processed_data_file: preprocessed_listings.csv
+model:
+  model_dir: models
+  artefact_name: simple_classifier.pkl
+plots_and_metrics:
+  reports_dir: evaluation/reports/metrics.json
+  importance_graphs_dir: evaluation/graphs/importance.png
+  confusion_matrix_dir: evaluation/graphs/confusion_matrix.csv
+    

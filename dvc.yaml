@@ -1,0 +1,59 @@
+stages:
+  preprocessing:
+    cmd: >-
+      python src/training/preprocessing.py
+      --input ${data.raw_data_dir}/${data.raw_data_file}
+      --output ${data.processed_data_dir}/${data.processed_data_file}
+    deps:
+      - ${data.raw_data_dir}/${data.raw_data_file}
+    params:
+      - data
+    outs:
+        - ${data.processed_data_dir}/${data.processed_data_file}:
+            cache: true
+
+  training:
+    cmd: >-
+      python src/training/fitting.py
+      --input_data ${data.processed_data_dir}/${data.processed_data_file}
+      --output_train_test ${data.train_test_set_dir}
+      --output_model ${model.model_dir}/${model.artefact_name}
+    deps:
+      - ${data.processed_data_dir}/${data.processed_data_file}
+    params:
+      - data
+      - model
+    outs:
+        - ${model.model_dir}/${model.artefact_name}:
+            cache: true
+        - ${data.train_test_set_dir}:
+            cache: true
+
+  evaluation:
+    cmd: >-
+      python src/training/evaluation.py
+      --input_data ${data.train_test_set_dir}
+      --input_model ${model.model_dir}/${model.artefact_name}
+      --importance_output_graphs ${plots_and_metrics.importance_graphs_dir}
+      --output_reports_path ${plots_and_metrics.reports_dir}
+      --output_reports_confusion_matrix ${plots_and_metrics.confusion_matrix_dir}
+    deps:
+      - ${model.model_dir}/${model.artefact_name}
+      - ${data.train_test_set_dir}
+    params:
+      - data
+      - model
+      - plots_and_metrics
+    metrics:
+        - ${plots_and_metrics.reports_dir}:
+            cache: true
+    plots:
+        - ${plots_and_metrics.importance_graphs_dir}:
+            cache: true
+        - ${plots_and_metrics.confusion_matrix_dir}:
+            x: actual_class
+            y: predicted_class
+            title: Test confusion matrix
+            x_label: Actual class
+            y_label: Predicted class
+            template: confusion
